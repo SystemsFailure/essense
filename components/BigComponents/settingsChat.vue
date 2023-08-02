@@ -8,13 +8,13 @@ const emit = defineEmits({
     <div class="settings">
         <div class="settings__container">
             <img 
-            class="close" 
-            width="20" 
-            height="20" 
-            src="https://img.icons8.com/material-sharp/24/777777/delete-sign.png" 
-            alt="delete-sign"
-            @click="() => emit('closeThis')"
-        />
+                class="close" 
+                width="20" 
+                height="20" 
+                src="https://img.icons8.com/material-sharp/24/777777/delete-sign.png" 
+                alt="delete-sign"
+                @click="() => emit('closeThis')"
+            />
 
             <button>clear history</button>
         

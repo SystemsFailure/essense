@@ -1,10 +1,19 @@
+import myStore from "store"
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    hooks: {
+        'close': () => {
+
+        }
+    },
+
     devtools: { enabled: true },
     typescript: {
         shim: false,
         typeCheck: true,
     },
+    ssr: true,
     app: {
         head: {
             link: [
@@ -20,11 +29,17 @@ export default defineNuxtConfig({
         },
     },
 
+    // plugins: [
+    //     '~/plugins/configuration.client.ts',
+    // ],
+
     // nitroConfifs added in 07/19/23 - 18:32 AM - Leonhard
     nitro: {
         plugins: [
             '~/server/mongoose_database/connect.ts',
-            '~/server/database/controllers/create.tables.ts',
+            '~/server/database/index.ts',
+
+            // '~/server/database/connect.ts',
         ],
         serverAssets: [
             {
@@ -33,7 +48,6 @@ export default defineNuxtConfig({
             }
         ]
     },
-
     components: [
         {
             path: '~/components',
@@ -42,6 +56,8 @@ export default defineNuxtConfig({
     ],
     modules: [
         '@pinia/nuxt',
+        '@nuxtjs/supabase',
+        // 'cookie-universal-nuxt',
     ],
     pinia: {
         autoImports: [
@@ -50,11 +66,22 @@ export default defineNuxtConfig({
             ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
         ],
     },
+    supabase: {
+        url: process.env.SUPABASE_URL || 'https://bkftpiqzmwoaawdgzqat.supabase.co',
+        key: process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrZnRwaXF6bXdvYWF3ZGd6cWF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTA2MTc2ODksImV4cCI6MjAwNjE5MzY4OX0.XzJF6LaKRzqn70SnRExmlk8Ke2VKarhOU_kjK7ybxrw',
+    },
 
     runtimeConfig: {
         MONGO_API: {
             secret: {
-                URL: process.env.MONGODB_URL || 'mongodb://localhost',
+                URL: 'mongodb://127.0.0.1:27017/nuxt-client' || process.env.MONGODB_URL,
+            }
+        },
+        SUPABASE_API: {
+            secret: {
+                SUPABASE_URL: process.env.SUPABASE_URL || 'https://bkftpiqzmwoaawdgzqat.supabase.co',
+                SUPABASE_KEY: process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrZnRwaXF6bXdvYWF3ZGd6cWF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTA2MTc2ODksImV4cCI6MjAwNjE5MzY4OX0.XzJF6LaKRzqn70SnRExmlk8Ke2VKarhOU_kjK7ybxrw',
+
             }
         }
     },

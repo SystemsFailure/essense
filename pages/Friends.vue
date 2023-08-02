@@ -10,8 +10,8 @@ let friends: Ref<User[] | object[] | undefined> = ref([
 ]);
 
 
-const { data } = await useFetch('/users/get-users');
-friends.value = data.value?.users;
+// const { data } = await useFetch('/users/get-users');
+// friends.value = data.value?.users;
 
 
 const filteredFriends: any = computed(() => {

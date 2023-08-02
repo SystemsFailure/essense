@@ -22,8 +22,8 @@
                 <div class="navigation__profile">
 
                     <button v-if="false" disabled style="pointer-events: none;">Added</button>
-                    <button v-else>Add to friends</button>
-                    <button>Chat</button>
+                    <button v-else @click="addToChats()">Add to Chat</button>
+                    <button @click="goToChat()">Chat</button>
 
                 </div>
 
@@ -175,6 +175,15 @@ let posts: Ref<Post[]> = ref([
 ]);
 
 
+function addToChats() {
+
+};
+
+function goToChat() {
+
+};
+
+
 </script>
 <style lang="css" scoped>
     
@@ -190,7 +199,7 @@ let posts: Ref<Post[]> = ref([
     .friend__ID .friend__container {
         width: 100%;
         height: 100%;
-        padding: 50px 250px;
+        padding: 50px 400px;
         position: relative;
         background-color: #0f0f0f;
         display: flex;
@@ -250,11 +259,11 @@ let posts: Ref<Post[]> = ref([
     }
 
     .container .navigation__profile button:first-child {
-        right: 15%;
+        right: 25%;
     }
 
     .container .navigation__profile button:last-child {
-        margin-left: 23%;
+        /* margin-left: -3%; */
     }
 
     .container .img__container {

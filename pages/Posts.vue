@@ -1,36 +1,43 @@
 <script setup lang="ts">
 import {Ref, ref} from 'vue';
-import {Post} from '../types/Post.types'
-let posts: Ref<Post[]> = ref([
-    {
-        id: 0,
-        title: 'Title of post',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-        atCreated: '02/12/2029 0:00:00 PM',
-        views: 10,
-        likes: 324,
-        comments: 92,
-        urls_images: ['http://', 'http://', 'http://', 'http://', 'https://',],
-        username: 'Elena Leonhard',
-        userAvatarUrl: 'http://',
-    },
-    {
-        id: 1,
-        title: 'Title of post',
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-        atCreated: '02/12/2029 0:00:00 PM',
-        views: 10,
-        likes: 324,
-        comments: 92,
-        urls_images: ['http://', 'http://', 'http://', 'http://', 'https://',],
-        username: 'Elena Leonhard',
-        userAvatarUrl: 'http://',
-    },
-]);
+import myStore from '../store/index';
+import {useCookies} from 'vue3-cookies';
+import { PostWithoutId} from '../types/Post.types'
+import { Image } from 'types/Image.types';
+let posts: Ref<PostWithoutId[]> = ref([]);
+
+const store = myStore();
+
+await getAllPosts();
+
+async function getAllPosts() {
+    const {data} = await useFetch('/posts/getAllPosts', {
+        method: 'post'
+
+    });
+    posts.value = data.value?.response;
+};
+
+function openWindowComments(post: PostWithoutId) {
+    useCookies().cookies.set('post_id', post._id);
+    console.log(useCookies().cookies.get('post_id'));
+    store.showListComments = true;
+}
+
+
+function test(post: PostWithoutId) {
+    console.log(post.images);
+    
+}
+
+function openImage(image: Image) {
+    console.log(image);  
+};
 
 </script>
 
 <template>
+    <ListComments v-if="store.showListComments"></ListComments>
     <div class="Posts">
         
         <div class="Posts__search_params">
@@ -49,7 +56,7 @@ let posts: Ref<Post[]> = ref([
 
             <div class="Posts__list_posts">
 
-                <div class="Posts__post" v-for="post in posts" :key="post.id">
+                <div class="Posts__post" v-for="post in posts" :key="post._id" @click="test(post)">
 
 
                     <div class="posts__navigation-bar">
@@ -64,7 +71,7 @@ let posts: Ref<Post[]> = ref([
 
                         </div>
 
-                        <div class="posts__comment-container">
+                        <div class="posts__comment-container" @click="openWindowComments(post)">
                             <img width="20" height="20" src="https://img.icons8.com/ios/20/00bfff/comments--v1.png" alt="comments--v1"/>
 
                             <span class="posts__comments-count">{{ post.comments }}</span>
@@ -88,9 +95,24 @@ let posts: Ref<Post[]> = ref([
                                     {{ post.atCreated }}
                                 </div>
                             </div>
-                            <div class="post__img_container">
-                                <img src="../../public/images/kali.jpg" alt="">
+
+
+                            <div class="_group__images" v-if="post.images.length > 0">
+
+                                <div class="_group__firstImage" v-if="post.images.length >= 1">
+                                    <img :src = 'post.images[0].url' alt="">
+                                </div>
+                                <!-- Если поставить значение 100%, и если картинок будет например 4, то они раздялят пространство по 25% -->
+                                <div class="_group__images__bottom-container" v-if="post.images.length > 1">
+                                    <div class="_group__image" v-for="image in post.images.slice(1)" :key="0" @click="openImage(image)">
+                                        <img :src="image.url" alt="">
+                                    </div>
+                                </div>
+
+
                             </div>
+
+
                             <div class="posts__body-content">
                                 {{ post.body }}
                             </div>
@@ -247,6 +269,7 @@ let posts: Ref<Post[]> = ref([
         display: flex;
         margin-top: 30px;
         margin-left: 10px;
+        height: 40px;
     }
 
     .post__title .post__title-dateCreated {
@@ -254,19 +277,63 @@ let posts: Ref<Post[]> = ref([
         font-size: 15px;
     }
 
-    .post__img_container {
+
+    ._group__images {
         width: 100%;
-        height: fit-content;
-        margin-top: 20px;
+        height: 100%;
+        padding: 20px;
+    }
+
+
+
+    ._group__images ._group__images__bottom-container {
+        width: 100%;
+        height: 50%;
+        padding: 10px 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    ._group__images__bottom-container ._group__image {
+        width: 100%;
+        height: 100%;
+        margin-left: 10px;
+        margin-right: 10px;
         border-radius: 10px;
     }
 
-    .post__img_container img {
+    ._group__image img {
         width: 100%;
-        height: 400px;
+        height: 100%;
+        object-fit: cover;
         border-radius: 10px;
-        object-fit: contain;
+    }
 
+    ._group__images__bottom-container ._group__image:hover {
+        cursor: pointer;
+        opacity: .5;
+        transition: .5s;
+    }
+
+
+
+    ._group__images ._group__firstImage {
+        width: 100%;
+        height: 50%;
+        padding: 0 50px;
+    }
+
+    ._group__images ._group__firstImage img {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    ._group__images ._group__firstImage img:hover {
+        cursor: pointer;
+        opacity: .5;
+        transition: .5s;
     }
 
     .posts__navigation-bar {

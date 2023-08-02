@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import settingsChat from '../components/BigComponents/settingsChat.vue';
-import {Ref, ref} from 'vue';
-import {Contact} from '../types/Contact.types';
-import {Message} from '../types/Message.types';
+import { Ref, ref } from 'vue';
+import { Contact } from '../types/Contact.types';
+import { Message } from '../types/Message.types';
 
 let currentContactId: any = ref('');
 let showSettingsChat: Ref<boolean> = ref(false);
@@ -58,7 +58,7 @@ function selectContact(id: any) {
 };
 
 function send() {
-    console.log('send', {body: messageField.value.trim()});
+    console.log('send', { body: messageField.value.trim() });
 };
 
 
@@ -69,6 +69,7 @@ function send() {
         v-if="showSettingsChat"
         @closeThis="() => showSettingsChat = false"
     ></settingsChat>
+    
     <div class="Messanger">
         
         <div class="contacts">

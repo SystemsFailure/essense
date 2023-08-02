@@ -4,7 +4,7 @@ export default async () => {
     try {
         mongoose.set('strictQuery', true);
         await mongoose.connect(useRuntimeConfig().MONGO_API.secret.URL);
-        console.log('Successfully connected');
+        console.log('Successfully connected to Mongoose');
     } catch (error) {
         return createError({ statusCode: 500, statusMessage: 'Something went wrong.' })
     }

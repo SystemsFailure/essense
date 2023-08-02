@@ -21,6 +21,11 @@
     </div>
 </template>
 <script setup lang="ts">
+import { User } from 'types/User.types';
+import { validname, validEmail, validpassword } from '../validations/registration.valid';
+
+
+
 const email = ref<string>('');
 const isErrorEmail = ref<boolean>(false);
 const username = ref<string>('');
@@ -28,9 +33,23 @@ const isErrorUsername = ref<boolean>(false);
 const password = ref<string>('');
 const isErrorPassword = ref<boolean>(false);
 
+// Use only id_ - in User, cuz just id is not valid
 async function submitForm() {
-    console.log('submitForm');
-    // code...
+    if(validEmail(email.value.trim()) && validname(username.value.trim()) && validpassword(password.value.trim())) {
+        const Userdata: User = {
+            id: 0,
+            username: username.value.trim(), 
+            password: password.value.trim(),
+            email: email.value.trim(),
+            friends: [],
+        };
+        const {data} = await useFetch('/regis/createUser', {method: 'post', body: {data: Userdata}});
+        if(data.value?.result === true) {
+            localStorage.setItem('user-data', JSON.stringify(data?.value?.user));
+            useRouter().push('/profile');
+        }
+        console.log('register is successful', data);
+    }
 };
 </script>
 <style lang="css" scoped>

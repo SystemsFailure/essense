@@ -7,16 +7,16 @@ export default async function useUser() {
     let user: Ref<User[] | object | undefined | null> = ref([
         { id: 0, username: 'Johny', email: 'user@example.com' },
     ]);
-    const { data } = await useFetch('/users/get-user',{
-        query: { id: id }
-    })
+    // const { data } = await useFetch('/users/get-user',{
+    //     query: { id: id }
+    // })
 
-    if(data.value?.user)  {
-        user.value = [data.value?.user];
-        result = true;
-    } else {
-        result = false;
-    }
+    // if(data.value?.user)  {
+    //     user.value = [data.value?.user];
+    //     result = true;
+    // } else {
+    //     result = false;
+    // }
     
     return {
         user: user,

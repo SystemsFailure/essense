@@ -1,55 +1,49 @@
 <script setup lang="ts">
 import { ref, Ref } from 'vue';
-const id = 1;
+import { useCookies } from 'vue3-cookies';
+let UniqueUser: Ref<any> = ref();
+let my_posts:Ref<any[]> = ref([  ]);
+// His function start through .0 sek last rendering on the server => rewrites the current user data
 
-interface Post {
-  id: number;
-  title: string,
-  body: string,
-  views: number,
+setTimeout(async () => {
+  await getcurrentUser();
+  const posts = await getPosts();
+  my_posts.value = posts;
+}, 110)
+
+async function getcurrentUser() {
+  // getting the current user if it exists in the localStorage
+  // const stringJSONUser = JSON.parse(localStorage?.getItem('user-data') || '');
+  const userId = useCookies().cookies.get('user-id');
+  console.log(userId, 'user-id');
+  
+  
+  // Getting the user from the database
+  const {data} = await useFetch(`/api/${userId}`)
+  
+  
+  UniqueUser.value = data.value?.response;
+  console.log(UniqueUser.value)
 };
 
-let my_posts:Ref<Post[]> = ref([
-    {
-      id: 0,
-      title: 'Elcome me', 
-      body: 'This is post for the following post on the site in my page profile and the following post on the site in my page profile and the following post on the site in my page profile',
-      views: 0,
-    },
-    {
-      id: 1,
-      title: 'Good night', 
-      body: 'This is post for the following post on the site in my page profile and the following post on the site in my page profile and the following post on the site in my page profile',
-      views: 0,
-    },
-    {
-      id: 2,
-      title: 'Good day', 
-      body: 'This is post for the following post on the site in my page profile and the following post on the site in my page profile and the following post on the site in my page profile',
-      views: 0,
-    },
-    {
-      id: 3,
-      title: 'Good day', 
-      body: 'This is post for the following post on the site in my page profile and the following post on the site in my page profile and the following post on the site in my page profile',
-      views: 0,
+
+
+  
+async function getPosts() {
+  const userId = useCookies().cookies.get('user-id');
+  const {data} = await useFetch('/posts/getPostByUserId', {
+    method: 'post',
+    body: {
+      userId: userId
     }
-  ]);
-type User = {
-    id: number,
-    username: string,
-    email: string
+  })
+  console.log(data.value?.response, 'needed posts');
+  return data.value?.response;
+  // my_posts.value = response.data.value?.response;
 };
 
-// const { data } = await useFetch(`/users/query?id=1`);
-let user: any = ref([
-    { id: 0, username: 'Johny', email: 'user@example.com' },
-]);
-const { data } = await useFetch('/users/get-user',{
-    query: { id: id }
-})
 
-user.value = [data.value?.user]
+
 
 function slice_body(str: string): string {
   
@@ -75,9 +69,9 @@ function slice_body(str: string): string {
 
         <div class="content__data-user">
 
-            <div class="content__user-id content__user-data"><span>user-uid : </span>{{ user[0].id }}</div>
-            <div class="content__user-name content__user-data"><span>username : </span>{{ user[0].username }}</div>
-            <div class="content__user-email content__user-data"><span>E-mail : </span>{{ user[0].email }}</div>
+            <div class="content__user-id content__user-data"><span>user-uid : </span>{{ UniqueUser?.id_ || ''}}</div>
+            <div class="content__user-name content__user-data"><span>username : </span>{{ UniqueUser?.username || '' }}</div>
+            <div class="content__user-email content__user-data"><span>E-mail : </span>{{ UniqueUser?.email || '' }}</div>
             <div class="content__user-no content__user-data"><span>user-HEADER : </span>{{ 'no' }}</div>
 
             <div class="navigation">
@@ -101,10 +95,10 @@ function slice_body(str: string): string {
           <div 
               class="posts__post" 
               v-for="post in my_posts" 
-              :key="0"
-              @click="useRouter().push('/posts/' + post.id)"
+              :key="post._id"
+              @click="useRouter().push('/posts/' + post._id)"
             >
-            <img src="../public/images/image-post-default.jpg" alt="" class="img_back_post">
+            <!-- <img src="../public/images/image-post-default.jpg" alt="" class="img_back_post"> -->
             <div class="posts__body-post">
 
               <div class="posts__special-data">
@@ -176,11 +170,15 @@ function slice_body(str: string): string {
 
 .posts__list {
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  height: fit-content;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* flex-wrap: wrap; */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 280px);
   padding: 10px;
+
 }
 
 .posts__list .posts__post {
