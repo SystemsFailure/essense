@@ -4,18 +4,34 @@ import myStore from '../store/index';
 import {useCookies} from 'vue3-cookies';
 import { PostWithoutId} from '../types/Post.types'
 import { Image } from 'types/Image.types';
-let posts: Ref<PostWithoutId[]> = ref([]);
+import {onMounted} from 'vue';
+let posts: Ref<PostWithoutId[] | undefined> = ref([]);
+
+
+let listRefsItems: any = [];
+let scrollArea: any = undefined;
+const setItemRef = (el: any) => {
+    if (el) {
+        listRefsItems.push(el);
+    }
+}
+
 
 const store = myStore();
 
 await getAllPosts();
 
+onMounted( () => {
+    trackingObserver();
+})
+
+
 async function getAllPosts() {
     const {data} = await useFetch('/posts/getAllPosts', {
         method: 'post'
-
     });
     posts.value = data.value?.response;
+
 };
 
 function openWindowComments(post: PostWithoutId) {
@@ -26,7 +42,7 @@ function openWindowComments(post: PostWithoutId) {
 
 
 function test(post: PostWithoutId) {
-    console.log(post.images);
+    console.log(post);
     
 }
 
@@ -34,11 +50,40 @@ function openImage(image: Image) {
     console.log(image);  
 };
 
+function markAsViewed(entries: any, observer: any) {
+    entries.forEach((el: any) => {
+        if(el.isIntersecting){
+            console.log('markAsViewed');
+        }
+    });
+};
+
+function trackingObserver(): void {
+
+    let options: {} = {
+        root: scrollArea,
+        rootMargin: '200px',
+        threshold: 1.0,
+    }
+    let observer = new IntersectionObserver(markAsViewed, options);
+    let tragets: any = listRefsItems;
+
+    for (let index: number = 0; index < tragets.length; index++) {
+        const element = tragets[index];
+        observer.observe(element);
+    }
+
+    
+}
+
+
 </script>
 
 <template>
+<!-- <ClientOnly placeholder="loading..."> -->
+
     <ListComments v-if="store.showListComments"></ListComments>
-    <div class="Posts">
+    <div class="Posts" :ref="scrollArea">
         
         <div class="Posts__search_params">
 
@@ -54,9 +99,11 @@ function openImage(image: Image) {
         <span class="title__page">Лента постов</span>
         <div class="Posts__container">
 
-            <div class="Posts__list_posts">
 
-                <div class="Posts__post" v-for="post in posts" :key="post._id" @click="test(post)">
+                
+            <div class="Posts__list_posts"  id="scrollArea_">
+
+                <div class="Posts__post" v-for="post in posts" :key="post._id" @click="test(post)" :ref="setItemRef">
 
 
                     <div class="posts__navigation-bar">
@@ -125,6 +172,9 @@ function openImage(image: Image) {
 
         </div>
     </div>
+
+<!-- </ClientOnly> -->
+
 </template>
 <style lang="css" scoped>
     .title__page {
@@ -135,11 +185,11 @@ function openImage(image: Image) {
         font-weight: bold;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         word-spacing: 5px;
-        overflow: auto;
+        /* overflow: auto; */
     }
 
     .Posts__search_params {
-        width: 300px;
+        width: 20%;
         height: 300px;
         position: absolute;
         left: 30px;
@@ -183,6 +233,8 @@ function openImage(image: Image) {
         overflow: auto;
         overflow-x: hidden;
         color: #999;
+        display: flex;
+        flex-direction: column;
     }
 
     .Posts__container {
@@ -200,11 +252,12 @@ function openImage(image: Image) {
         background-color: #131313;
         border-radius: 10px;
         padding: 20px;
-        
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .Posts__post {
-
         width: 100%;
         height: fit-content;
 

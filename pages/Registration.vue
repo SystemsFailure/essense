@@ -15,42 +15,25 @@
                 <inputComp type="password" class="form__input" id="password" v-model="password" :placeholder="'password'"></inputComp>
                 <p class="form__input--error" v-show="isErrorPassword">password less than 4</p>
 
-                <ButtonComp class="form__button" @click="submitForm">Log in</ButtonComp>
+                <ButtonComp class="form__button" @click="submit">Log in</ButtonComp>
             </form>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import { User } from 'types/User.types';
-import { validname, validEmail, validpassword } from '../validations/registration.valid';
+import {Ref} from 'vue';
+import useSubmitForm from '../composables/RegistrationComp/useSubmitForm';
 
-
-
-const email = ref<string>('');
+const email: Ref<string> = ref<string>('');
 const isErrorEmail = ref<boolean>(false);
-const username = ref<string>('');
+const username: Ref<string> = ref<string>('');
 const isErrorUsername = ref<boolean>(false);
-const password = ref<string>('');
+const password: Ref<string> = ref<string>('');
 const isErrorPassword = ref<boolean>(false);
 
-// Use only id_ - in User, cuz just id is not valid
-async function submitForm() {
-    if(validEmail(email.value.trim()) && validname(username.value.trim()) && validpassword(password.value.trim())) {
-        const Userdata: User = {
-            id: 0,
-            username: username.value.trim(), 
-            password: password.value.trim(),
-            email: email.value.trim(),
-            friends: [],
-        };
-        const {data} = await useFetch('/regis/createUser', {method: 'post', body: {data: Userdata}});
-        if(data.value?.result === true) {
-            localStorage.setItem('user-data', JSON.stringify(data?.value?.user));
-            useRouter().push('/profile');
-        }
-        console.log('register is successful', data);
-    }
-};
+async function submit() {
+    await useSubmitForm(email, username, password)
+}
 </script>
 <style lang="css" scoped>
 .regis {
@@ -73,16 +56,6 @@ async function submitForm() {
     justify-content: center;
 }
 
-.regis__content .ragis__form-title {
-    text-align: center;
-    color: #999;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    word-spacing: 5px;
-    font-weight: 700;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: x-large;
-}
 
 .regis__form {
     display: flex;

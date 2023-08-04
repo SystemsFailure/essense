@@ -1,15 +1,25 @@
+import { UserAttributesInput, UserAttributes } from '../../../types/User.types';
+import { DataTypes, Model} from 'sequelize';
 import sequelize from '../connect';
-import { DataTypes } from 'sequelize';
 
-const User = sequelize.define('Users', {
-    id_: {
+
+class User extends Model<UserAttributes, UserAttributesInput> implements UserAttributes {
+    public id!: number;
+    public username!: string;
+    public email!: string;
+    declare public password: string;
+    declare public friends: [];
+
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date;
+}
+
+User.init({
+    id: {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV1,
-    },
-    id: {
-       type: DataTypes.INTEGER,
-       defaultValue: '0',
     },
     username: {
         type: DataTypes.STRING,
@@ -28,6 +38,12 @@ const User = sequelize.define('Users', {
         type: DataTypes.ARRAY(DataTypes.JSON),
         defaultValue: []
     },
+
+}, {
+    timestamps: true,
+    paranoid: true,
+    sequelize: sequelize,
 })
+
 
 export default User;

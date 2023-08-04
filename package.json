@@ -13,12 +13,16 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@nuxtjs/style-resources": "^1.2.1",
     "@nuxtjs/supabase": "^0.3.8",
     "@types/node": "^18.16.19",
     "@types/nodemailer": "^6.4.8",
-    "nuxt": "^3.6.3"
+    "nuxt": "^3.6.3",
+    "sass": "^1.64.2",
+    "sass-loader": "^13.3.2"
   },
   "dependencies": {
+    "@nuxt/webpack-builder": "^3.6.5",
     "@pinia/nuxt": "^0.4.11",
     "cookie-universal-nuxt": "^2.2.2",
     "mongoose": "^7.4.0",

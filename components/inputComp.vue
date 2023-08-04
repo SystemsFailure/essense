@@ -19,9 +19,3 @@ const value = computed({
 })
 
 </script>
-<style scoped>
-.input{
-    padding: 5px;
-    border: 2px double rgb(2, 153, 70);
-}
-</style>

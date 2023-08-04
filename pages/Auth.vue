@@ -15,12 +15,15 @@
                 <inputComp type="password" class="form__input" id="password" v-model="password" :placeholder="'password'"></inputComp>
                 <p class="form__input--error" v-show="isErrorPassword">password less than 4</p>
 
-                <ButtonComp class="form__button" @click="submitForm">submit</ButtonComp>
+                <ButtonComp class="form__button" @click="submit">submit</ButtonComp>
             </form>
         </div>
     </div>
 </template>
 <script setup lang="ts">
+import useWatching from '../composables/AuthComp/useWatching';
+import useAuth from '../composables/AuthComp/useAuth';
+
 const email = ref<string>('');
 const isErrorEmail = ref<boolean>(false);
 const username = ref<string>('');
@@ -28,44 +31,21 @@ const isErrorUsername = ref<boolean>(false);
 const password = ref<string>('');
 const isErrorPassword = ref<boolean>(false);
 
-// Валидация email
-function validateEmail(email: string) {
-    return email
-        .toLowerCase()
-        .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
-};
+useWatching(email, isErrorEmail, username, isErrorUsername, password, isErrorPassword);
 
-// Email
-watch(() => email.value, (newValue) => {
-    if (!validateEmail(newValue) && email.value.length) {
-        isErrorEmail.value = true;
-    } else isErrorEmail.value = false;
-});
-// Username
-watch(() => username.value, (newValue) => {
-    if (username.value.length > 0 && username.value.length < 4) isErrorUsername.value = true;
-    else isErrorUsername.value = false;
-});
-// Password
-watch(() => password.value, (newValue) => {
-    if (password.value.length > 0 && password.value.length < 4) isErrorPassword.value = true;
-    else isErrorPassword.value = false;
-});
-
-async function submitForm() {
-    const { data, pending } = await useFetch('/auth/emailSender', {
-        method: 'POST', 
-        body: {
-            email: email.value
+async function submit() {
+    const user = await useAuth({
+        data: {
+            email: email.value.trim(),
+            username: username.value.trim(),
+            password: password.value.trim(),
         }
-    })
-    console.log(data.value);
+    });
+    user ? useRouter().push('Profile') : false;
 }
 
 </script>
-<style scoped>
+<style scoped lang="css">
 .auth {
     position: fixed;
     top: 0;

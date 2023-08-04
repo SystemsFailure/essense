@@ -27,8 +27,23 @@ interface PostWithoutId {
     userAvatarUrl: string;
     images: Image[],
     userId: string;
-}
+};
+
+interface PostForCreate {
+    title: string;
+    body: string;
+    atCreated: string;
+    views: number;
+    likes: number;
+    comments: number;
+    username: string;
+    userAvatarUrl: string;
+    images: Image[],
+    userId: string;
+};
+
+
 
 export {
-    Post, PostWithoutId
+    Post, PostWithoutId, PostForCreate
 }

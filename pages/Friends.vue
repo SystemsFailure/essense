@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import {Ref, ref, computed} from 'vue'; 
-import { User } from "types/User.types"
-// let {} = await useFriends(searchField.value);
-
+import { User } from "types/User.types";
+import useGetAllUsers from '../composables/FriendsComp/useGetAllUsers';
 let searchField: Ref<string> = ref('');
 
-let friends: Ref<User[] | object[] | undefined> = ref([
-    { id: 0, username: 'John', email: 'John@gmail.com', },
-]);
+let friends: Ref<User[] | undefined> = ref([]);
 
-
-// const { data } = await useFetch('/users/get-users');
-// friends.value = data.value?.users;
-
+await useGetAllUsers(friends);
 
 const filteredFriends: any = computed(() => {
     return friends.value?.filter((el: any) => el.username.includes(searchField.value))
@@ -44,7 +38,7 @@ function goToProfileFriend(friend: any) {
                         <div class="Friends__icon Friends__bodyItem"><img src="01.jpg" alt=""></div>
                         <div class="Friends__userName Friends__bodyItem"><span>{{ friend.username }}</span></div>
                         <!-- <div class="Friends__userEmail Friends__bodyItem">{{ friend.email }}</div> -->
-                        <div class="Friends__AtDate Friends__bodyItem">{{ '23/05/23:05:32 PM' }}</div>
+                        <div class="Friends__AtDate Friends__bodyItem">{{ friend.createdAt }}</div>
 
                         <button @click="goToProfileFriend(friend)">Visit</button>
 
@@ -64,9 +58,7 @@ function goToProfileFriend(friend: any) {
     height: 100vh;
     display: flex;
     background-color: #000000;
-    /* align-items: center; */
-    /* justify-content: center; */
-    padding: 100px 200px;
+    padding: 100px 300px;
 }
 .Friends__goBack {
     position: absolute;
@@ -95,11 +87,6 @@ function goToProfileFriend(friend: any) {
     height: 100%;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
-    /* justify-content: center; */
-}
-
-.Friends__search-friends {
 }
 
 .Friends__search-friends input {
@@ -125,7 +112,6 @@ function goToProfileFriend(friend: any) {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
 }
 .Friends__item {
     width: 100%;
@@ -165,9 +151,6 @@ function goToProfileFriend(friend: any) {
     object-fit: cover;
 }
 
-.Friends__icon {
-    
-}
 .Friends__userName {
     margin-left: 20px;
     font-size: 18px;
@@ -178,7 +161,6 @@ function goToProfileFriend(friend: any) {
 
 }
 .Friends__AtDate {
-    /* margin-left: 20px; */
     font-size: 15px;
     width: 100%;
     text-align: end;

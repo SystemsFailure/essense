@@ -1,53 +1,3 @@
-<template>
-    <div class="listComments">
-        <div class="listComments__container">
-            <img 
-                class="close" 
-                width="20" 
-                height="20" 
-                src="https://img.icons8.com/material-sharp/24/777777/delete-sign.png" 
-                alt="delete-sign"
-                @click="() => {emit('closeThis'); store.showListComments = false;}"
-            />
-
-            <div class="listComments__list">
-
-                <div class="listComments__item" v-for="comment in comments" :key="comment._id">
-                    
-                    
-                    <div class="listComments__item__container-img-avatar"> 
-                        <img src="../../public/01.jpg" alt=""> 
-                    </div>
-
-                    <div class="listComments__item__container-body">
-                        <span>{{ comment?.body }}</span>
-                        <div class="listComments__item__container-like">
-                            <img v-if="implLike" @click="implementsLike(comment)" class="listComments__like-disabled" width="15" height="15" src="https://img.icons8.com/material-sharp/24/555555/facebook-like--v1.png" alt="facebook-like--v1"/>
-                            <img v-else class="listComments__like-active" width="15" height="15" src="https://img.icons8.com/material-sharp/24/ffffff/facebook-like--v1.png" alt="facebook-like--v1"/>
-                            <span class="countLikes">{{ comment.likes > 1000 ? `${Math.round(comment.likes) / 1000}K` : comment.likes }}</span>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="input__wrapper">
-
-                <textarea type="text" placeholder="type comment..." class="input__comment" v-model="comment__text"></textarea>
-                <img 
-                    width="25" 
-                    height="25" 
-                    src="https://img.icons8.com/external-inkubators-glyph-inkubators/25/888888/external-send-ecommerce-user-interface-inkubators-glyph-inkubators.png" 
-                    alt="external-send-ecommerce-user-interface-inkubators-glyph-inkubators"
-                    @click="send"
-                    style="margin-left: 15px;"
-                />
-            </div>
-
-        </div>
-    </div>
-</template>
 <script setup lang="ts">
 import { useCookies } from 'vue3-cookies';
 import myStore from '../../store/index';
@@ -124,6 +74,63 @@ async function implementsCountCommentsByPostId(comment: Comment) {
 }
 
 </script>
+
+
+
+
+
+
+<template>
+    <div class="listComments">
+        <div class="listComments__container">
+            <img 
+                class="close" 
+                width="20" 
+                height="20" 
+                src="https://img.icons8.com/material-sharp/24/777777/delete-sign.png" 
+                alt="delete-sign"
+                @click="() => {emit('closeThis'); store.showListComments = false;}"
+            />
+
+            <div class="listComments__list">
+
+                <div class="listComments__item" v-for="comment in comments" :key="comment._id">
+                    
+                    
+                    <div class="listComments__item__container-img-avatar"> 
+                        <img src="../../public/01.jpg" alt=""> 
+                    </div>
+
+                    <div class="listComments__item__container-body">
+                        <span>{{ comment?.body }}</span>
+                        <div class="listComments__item__container-like">
+                            <img v-if="implLike" @click="implementsLike(comment)" class="listComments__like-disabled" width="15" height="15" src="https://img.icons8.com/material-sharp/24/555555/facebook-like--v1.png" alt="facebook-like--v1"/>
+                            <img v-else class="listComments__like-active" width="15" height="15" src="https://img.icons8.com/material-sharp/24/ffffff/facebook-like--v1.png" alt="facebook-like--v1"/>
+                            <span class="countLikes">{{ comment.likes > 1000 ? `${Math.round(comment.likes) / 1000}K` : comment.likes }}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="input__wrapper">
+
+                <textarea type="text" placeholder="type comment..." class="input__comment" v-model="comment__text"></textarea>
+                <img 
+                    width="25" 
+                    height="25" 
+                    src="https://img.icons8.com/external-inkubators-glyph-inkubators/25/888888/external-send-ecommerce-user-interface-inkubators-glyph-inkubators.png" 
+                    alt="external-send-ecommerce-user-interface-inkubators-glyph-inkubators"
+                    @click="send"
+                    style="margin-left: 15px;"
+                />
+            </div>
+
+        </div>
+    </div>
+</template>
+
 <style lang="css" scoped>
     .listComments {
         color: #fff;

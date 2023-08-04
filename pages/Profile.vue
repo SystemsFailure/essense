@@ -1,61 +1,21 @@
 <script setup lang="ts">
 import { ref, Ref } from 'vue';
-import { useCookies } from 'vue3-cookies';
-let UniqueUser: Ref<any> = ref();
-let my_posts:Ref<any[]> = ref([  ]);
-// His function start through .0 sek last rendering on the server => rewrites the current user data
+import { onMounted } from 'vue';
+import { User } from 'types/User.types';
+import useGetCurrentUser from '../composables/ProfileComp/useGetCurrentUser';
+import useGetPostsUserId from '../composables/ProfileComp/useGetPostsByUserId';
+import useSliceWord from '../composables/ProfileComp/useSliceWord';
+let UniqueUser: Ref<User | undefined> = ref(  );
+let my_posts:Ref<any[] | undefined> = ref([  ]);
 
-setTimeout(async () => {
-  await getcurrentUser();
-  const posts = await getPosts();
-  my_posts.value = posts;
-}, 110)
-
-async function getcurrentUser() {
-  // getting the current user if it exists in the localStorage
-  // const stringJSONUser = JSON.parse(localStorage?.getItem('user-data') || '');
-  const userId = useCookies().cookies.get('user-id');
-  console.log(userId, 'user-id');
-  
-  
-  // Getting the user from the database
-  const {data} = await useFetch(`/api/${userId}`)
-  
-  
-  UniqueUser.value = data.value?.response;
-  console.log(UniqueUser.value)
-};
-
-
-
-  
-async function getPosts() {
-  const userId = useCookies().cookies.get('user-id');
-  const {data} = await useFetch('/posts/getPostByUserId', {
-    method: 'post',
-    body: {
-      userId: userId
-    }
-  })
-  console.log(data.value?.response, 'needed posts');
-  return data.value?.response;
-  // my_posts.value = response.data.value?.response;
-};
-
-
-
-
-function slice_body(str: string): string {
-  
-  return str.slice(0, 100) + '...';
-}
-
+onMounted(async () => {
+  await useGetCurrentUser(UniqueUser);
+  await useGetPostsUserId(my_posts);
+})
 
 </script>
 
-
 <template>
-        
 <section id="content" class="container">
     <!-- Begin .page-heading -->
     <div class="page-heading">
@@ -69,10 +29,13 @@ function slice_body(str: string): string {
 
         <div class="content__data-user">
 
-            <div class="content__user-id content__user-data"><span>user-uid : </span>{{ UniqueUser?.id_ || ''}}</div>
-            <div class="content__user-name content__user-data"><span>username : </span>{{ UniqueUser?.username || '' }}</div>
+            <div class="content__user-name content__user-data">{{ UniqueUser?.username || '' }}</div>
             <div class="content__user-email content__user-data"><span>E-mail : </span>{{ UniqueUser?.email || '' }}</div>
-            <div class="content__user-no content__user-data"><span>user-HEADER : </span>{{ 'no' }}</div>
+            <div class="content__user-socialdata">
+              <span class="content__user_count-posts">posts  {{ 12 }}</span>
+              <span class="content__user_count-chats">chats  {{ 54 }}</span>
+            </div>
+            <!-- <div class="content__user-no content__user-data"><span>user-HEADER : </span>{{ 'no' }}</div> -->
 
             <div class="navigation">
               <button @click="useRouter().push('/friends')">Friends</button>
@@ -119,7 +82,7 @@ function slice_body(str: string): string {
 
               <div class="posts__title">{{ post.title }}</div>
 
-              <div class="posts__body">{{ slice_body(post.body) }}</div>
+              <div class="posts__body">{{ useSliceWord(post.body) }}</div>
             </div>
           </div>
 
@@ -140,7 +103,7 @@ function slice_body(str: string): string {
     width: 100%;
     height: 100vh;
     display: block;
-    padding: 20px;
+    padding: 20px 200px;
     overflow-x: hidden;
     background-color: #000000;
 }
@@ -282,13 +245,31 @@ function slice_body(str: string): string {
     color: rgb(180, 180, 180);
     padding: 20px;
     border-radius: 10px;
+
+    .content__user-socialdata {
+      width: 100%;
+      margin-top: 10px;
+      padding: 5px;
+      padding-left: 0;
+      font-size: 15px;
+      display: flex;
+      flex-direction: column;
+
+      .content__user_count-posts{ 
+
+      }
+
+      .content__user_count-chats {
+
+      }
+    }
 }
 
 .navigation {
   width: 100%;
   height: 50%;
   display: flex;
-  padding-top: 30px;
+  padding-top: 20px;
 }
 .navigation button {
   padding: 10px 20px;

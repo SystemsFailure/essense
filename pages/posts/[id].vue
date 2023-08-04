@@ -1,51 +1,43 @@
 <script setup lang="ts">
+import PostSkilleton from '../../components/Skilletons/PostSkilleton.vue';
+import useGetPostById from '../../composables/PostIdComp/useGetPostById';
+import { Image } from 'types/Image.types';
 import { useCookies } from 'vue3-cookies';
-const {cookies} = useCookies();
 
+const {cookies} = useCookies();
+const postId: string | string[] = useRoute()?.params?.id || cookies?.get('post_id');
 let show_listComments: Ref<boolean> = ref(false);
 let post: Ref<any> = ref({});
-
-
-
-async function getPost() {
-    const postId = useRoute().params.id;
-    console.log(postId);
     
-    if(postId) {
-        const {data} = await useFetch('/posts/getPostById', {
-            method: 'post',
-            body: {postId: postId}
-        })
-        console.log(data.value?.post, 'post');
-        
-        post.value = data.value?.post;
-    }
-};
-await getPost();
-
-
+    
+onMounted(async () => {
+    console.log(cookies.get('post_id'), 'post_id');
+})
+    
+const pending = await useGetPostById(postId, post);
 
 function openCommentsWindow() {
     show_listComments.value = true;
     setCurrentPostId();
 };
 
-onMounted(async () => {
-    console.log(cookies.get('post_id'), 'post_id');
-})
-
-
 function setCurrentPostId() {
-    const str_post_id: string = useRoute().params.id;
-    cookies.set('post_id', str_post_id);
+    cookies.set('post_id', postId);
 };
+
+function openImage(image: Image) {
+    console.log(image);
+}
 
 </script>
 
 <template>
     <listComments v-if="show_listComments" @close-this="show_listComments = false"></listComments>
     <div class="postview">
-        <div class="postview__post">
+
+        <PostSkilleton v-if="pending"> </PostSkilleton>
+
+        <div class="postview__post" v-else>
 
             <div class="posts__navigation-bar">
                 <div class="posts__like-container">
@@ -142,7 +134,7 @@ function setCurrentPostId() {
         border-radius: 10px;
         position: relative;
         padding: 10px;
-
+        overflow: hidden;
         margin-top: 250px;
 
     }

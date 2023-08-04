@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, Ref} from 'vue';
 import {Image} from '../types/Image.types';
-import { PostWithoutId } from 'types/Post.types';
+import { PostForCreate } from 'types/Post.types';
 import {validTitle, validBody} from '../validations/new-post.valid';
 import { useCookies } from 'vue3-cookies';
 import * as tus from 'tus-js-client';
@@ -128,7 +128,7 @@ async function createPost() {
         validBody(body.value)
     ) 
     {
-        let data_: PostWithoutId = {
+        let data_: PostForCreate = {
             title: title.value,
             body: body.value,
             atCreated: new Date().toJSON(),

@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
+import { PostForCreate } from "../../../types/Post.types";
 const {Schema} = mongoose;
 // import { Image } from "../../../types/Image.types";
-const postSchema = new Schema({
+const postSchema = new Schema<PostForCreate>({
     title: String,
     body: String,
     atCreated: Date,
