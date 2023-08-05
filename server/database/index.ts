@@ -1,5 +1,5 @@
 import sequelize from "./connect";
-import { User } from './models';
+import { User, Message, Chat, UserChat } from './models';
 
 ( async () => {
     try {
@@ -8,10 +8,10 @@ import { User } from './models';
     } catch (error) {
         console.error('Unable to connect to the database:', error);
     }
-} )
+} ) 
 
 export default async() => {
-    User.sync({ force: false });
+    sequelize.sync({ force: false });
     console.log('Connection has been established successfully with postgres');
 }
 

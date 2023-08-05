@@ -1,11 +1,11 @@
 // Связующий модуль MODELS
-import { DataTypes } from 'sequelize';
-import sequelize from '../connect';
-import User from './User';
-import Chat from './Chat';
-import Message from './Message';
+const { DataTypes } = require('sequelize');
+const sequelize = require('../connect');
+const User = require('./User');
+const Chat = require('./Chat');
+const Message = require('./Message');
 
-const UserChat = sequelize.define('userChat', {
+const userChat = sequelize.define('userChat', {
     chatId: {
         type: DataTypes.UUID,
         references: {
@@ -22,8 +22,8 @@ const UserChat = sequelize.define('userChat', {
     }
 }, { timestamps: false })
 
-Chat.belongsToMany(User, { through: UserChat });
-User.belongsToMany(Chat, { through: UserChat });
+Chat.belongsToMany(User, { through: userChat });
+User.belongsToMany(Chat, { through: userChat });
 
 
 Chat.hasMany(Message, {
@@ -38,9 +38,9 @@ Message.belongsTo(Chat, {
 });
 
 
-export {
+module.exports = {
     User,
     Chat,
     Message,
-    UserChat,
+    userChat,
 }

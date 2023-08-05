@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import settingsChat from '../components/BigComponents/settingsChat.vue';
 import { Ref, ref } from 'vue';
-import { Contact } from '../types/Contact.types';
+import { Chat } from '../types/Chat.types';
 import { Message } from '../types/Message.types';
 
 let currentContactId: any = ref('');
 let showSettingsChat: Ref<boolean> = ref(false);
 let messageField: Ref<string> = ref('');
 
-let contacts: Ref<Contact[]> = ref([
+let contacts: Ref<Chat[]> = ref([
    {
     id: '01fx', url_image: 'http://', name: 'Elena Leonhard', dateLastMessage: '06:32 PM', countNotReadMessage: 10,
    },
@@ -53,8 +53,11 @@ let messages: Ref<Message[]> = ref([
     },
 ]);
 
-function selectContact(id: any) {
+async function selectContact(id: any) {
     currentContactId.value = id;
+    const response = await $fetch('http://localhost:8080/', { method: 'GET'});
+    console.log(response);
+    
 };
 
 function send() {
